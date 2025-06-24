@@ -1,5 +1,6 @@
 import joblib
 from fastapi import FastAPI
+from service import imagepredict
 
 from models.PhoneInput import PhoneInput
 
@@ -16,6 +17,7 @@ async def root():
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
+app.include_router(imagepredict.router, tags=["Predicts"])
 
 @app.post("/predict")
 async def root(specs: PhoneInput):
