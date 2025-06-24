@@ -8,6 +8,8 @@ const HomePage = () => {
   // Lista de tus trabajos semanales
   const weeklyWorks = [
     { id: 1, name: "Algoritmo Genético", path: "/genetic-algorithm" },
+    { id: 2, name: "Naive Bayes", path: "/naive-bayes" },
+    { id: 3, name: "Redes Neuronales", path: "/redes-neuronales" }
   ];
 
   return (

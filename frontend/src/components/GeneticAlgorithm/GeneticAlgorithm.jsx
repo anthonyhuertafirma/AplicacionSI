@@ -1,7 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './GeneticAlgorithm.css'; 
+import './GeneticAlgorithm.css';
+import { useNavigate } from "react-router-dom";
+
+const fitnessFunctions = {
+  "x*sin(y) + y*cos(x)": ([x, y]) => x * Math.sin(y) + y * Math.cos(x),
+  "x^2 + y^2": ([x, y]) => -(x ** 2 + y ** 2),
+  "sin(x*y)": ([x, y]) => Math.sin(x * y),
+  "x*y + cos(x+y)": ([x, y]) => x * y + Math.cos(x + y)
+};
+
 const GeneticAlgorithm = () => {
-  // Configuración del algoritmo
+  const navigate = useNavigate();
+
+  const [selectedFunc, setSelectedFunc] = useState("x*sin(y) + y*cos(x)");
+
   const [config, setConfig] = useState({
     populationSize: 50,
     generations: 100,
@@ -9,19 +21,16 @@ const GeneticAlgorithm = () => {
     bounds: [-10, 10]
   });
 
-  // Estado del algoritmo
   const [population, setPopulation] = useState([]);
   const [currentGen, setCurrentGen] = useState(0);
   const [bestIndividual, setBestIndividual] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [history, setHistory] = useState([]);
 
-  // Función de fitness
   const fitness = useCallback(([x, y]) => {
-    return x * Math.sin(y) + y * Math.cos(x);
-  }, []);
+    return fitnessFunctions[selectedFunc]([x, y]);
+  }, [selectedFunc]);
 
-  // Crear individuo aleatorio
   const createIndividual = useCallback(() => {
     const range = config.bounds[1] - config.bounds[0];
     return [
@@ -30,60 +39,48 @@ const GeneticAlgorithm = () => {
     ];
   }, [config.bounds]);
 
-  // Inicializar población
   const initializePopulation = useCallback(() => {
     return Array.from({ length: config.populationSize }, createIndividual);
   }, [config.populationSize, createIndividual]);
 
-  // Selección (torneo)
   const selection = useCallback((pop) => {
     return [...pop]
       .sort((a, b) => fitness(b) - fitness(a))
       .slice(0, Math.floor(pop.length / 2));
   }, [fitness]);
 
-  // Cruce (punto medio)
-  const crossover = useCallback((parent1, parent2) => {
-    return [
-      (parent1[0] + parent2[0]) / 2,
-      (parent1[1] + parent2[1]) / 2
-    ];
+  const crossover = useCallback((p1, p2) => {
+    return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
   }, []);
 
-  // Mutación
   const mutate = useCallback((individual) => {
-    return individual.map(value => {
+    return individual.map(val => {
       if (Math.random() < config.mutationRate) {
         const mutation = (Math.random() - 0.5) * 2;
         return Math.max(
-          Math.min(
-            value + mutation, 
-            config.bounds[1]
-          ), 
+          Math.min(val + mutation, config.bounds[1]),
           config.bounds[0]
         );
       }
-      return value;
+      return val;
     });
   }, [config.mutationRate, config.bounds]);
 
-  // Ejecutar una generación
-  const runGeneration = useCallback((currentPop) => {
-    const selected = selection(currentPop);
-    const newPopulation = [];
+  const runGeneration = useCallback((pop) => {
+    const selected = selection(pop);
+    const newPop = [];
 
-    while (newPopulation.length < config.populationSize) {
-      const parent1 = selected[Math.floor(Math.random() * selected.length)];
-      const parent2 = selected[Math.floor(Math.random() * selected.length)];
-      let child = crossover(parent1, parent2);
+    while (newPop.length < config.populationSize) {
+      const p1 = selected[Math.floor(Math.random() * selected.length)];
+      const p2 = selected[Math.floor(Math.random() * selected.length)];
+      let child = crossover(p1, p2);
       child = mutate(child);
-      newPopulation.push(child);
+      newPop.push(child);
     }
 
-    return newPopulation;
+    return newPop;
   }, [config.populationSize, selection, crossover, mutate]);
 
-  // Iniciar/detener el algoritmo
   const toggleAlgorithm = () => {
     if (!isRunning) {
       setPopulation(initializePopulation());
@@ -93,55 +90,68 @@ const GeneticAlgorithm = () => {
     setIsRunning(!isRunning);
   };
 
-  // Efecto para ejecutar el algoritmo
   useEffect(() => {
     if (!isRunning || currentGen >= config.generations) return;
 
     const timer = setTimeout(() => {
-      const newPopulation = runGeneration(population);
-      const currentBest = [...newPopulation]
-        .sort((a, b) => fitness(b) - fitness(a))[0];
+      const newPop = runGeneration(population);
+      const best = [...newPop].sort((a, b) => fitness(b) - fitness(a))[0];
 
-      setPopulation(newPopulation);
-      setBestIndividual(currentBest);
-      setHistory(prev => [...prev, fitness(currentBest)]);
+      setPopulation(newPop);
+      setBestIndividual(best);
+      setHistory(prev => [...prev, fitness(best)]);
       setCurrentGen(prev => prev + 1);
     }, 100);
 
     return () => clearTimeout(timer);
   }, [isRunning, currentGen, population, config.generations, runGeneration, fitness]);
 
-  // Renderizado
   return (
     <div className="genetic-algorithm">
-      <h2>Algoritmo Genético Optimización</h2>
-      <p>Función: f(x,y) = x*sin(y) + y*cos(x)</p>
+      <button onClick={() => navigate('/')} style={{ marginBottom: "1rem" }}>
+        Volver al inicio
+      </button>
+
+      <h2>Algoritmo Genético de Optimización</h2>
+
+      <div style={{ marginBottom: "1rem" }}>
+        <label>Selecciona función: </label>
+        <select
+          value={selectedFunc}
+          onChange={(e) => setSelectedFunc(e.target.value)}
+          disabled={isRunning}
+        >
+          {Object.keys(fitnessFunctions).map(fn => (
+            <option key={fn} value={fn}>{fn}</option>
+          ))}
+        </select>
+      </div>
 
       <div className="controls">
         <button onClick={toggleAlgorithm}>
           {isRunning ? 'Detener' : 'Iniciar'}
         </button>
-        
+
         <div className="config">
           <label>
             Tamaño población:
-            <input 
-              type="number" 
+            <input
+              type="number"
               value={config.populationSize}
-              onChange={(e) => setConfig({...config, populationSize: parseInt(e.target.value)})}
+              onChange={(e) => setConfig({ ...config, populationSize: parseInt(e.target.value) })}
               disabled={isRunning}
             />
           </label>
-          
+
           <label>
             Tasa mutación:
-            <input 
-              type="number" 
+            <input
+              type="number"
               step="0.01"
               min="0"
               max="1"
               value={config.mutationRate}
-              onChange={(e) => setConfig({...config, mutationRate: parseFloat(e.target.value)})}
+              onChange={(e) => setConfig({ ...config, mutationRate: parseFloat(e.target.value) })}
               disabled={isRunning}
             />
           </label>
@@ -152,9 +162,7 @@ const GeneticAlgorithm = () => {
         <p>Generación: {currentGen}/{config.generations}</p>
         {bestIndividual && (
           <p>
-            Mejor solución: 
-            x = {bestIndividual[0].toFixed(4)}, 
-            y = {bestIndividual[1].toFixed(4)}, 
+            Mejor solución: x = {bestIndividual[0].toFixed(4)}, y = {bestIndividual[1].toFixed(4)}<br />
             Fitness = {fitness(bestIndividual).toFixed(4)}
           </p>
         )}
@@ -163,12 +171,12 @@ const GeneticAlgorithm = () => {
       <div className="visualization">
         <h3>Progreso del fitness</h3>
         <div className="chart">
-          {history.map((value, idx) => (
-            <div 
-              key={idx} 
-              className="bar" 
-              style={{ height: `${Math.max(0, value * 5)}px` }}
-              title={`Gen ${idx}: ${value.toFixed(2)}`}
+          {history.map((val, i) => (
+            <div
+              key={i}
+              className="bar"
+              style={{ height: `${Math.max(0, val * 5)}px` }}
+              title={`Gen ${i}: ${val.toFixed(2)}`}
             />
           ))}
         </div>

@@ -1,10 +1,21 @@
 import joblib
 from fastapi import FastAPI
+import numpy as np
 
 from models.PhoneInput import PhoneInput
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 model = joblib.load("./notebooks/naive_bayes_model.joblib")
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # o ["*"] si estás en dev
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -52,3 +63,11 @@ async def root(specs: PhoneInput):
         return "Gama media alta"
     else:
         return "Gama alta"
+
+
+@app.post("/predict-rn")
+def predict(data: dict[str, float]):
+    X = np.array([[v for v in data.values()]])
+    pred = model.predict(X)
+    clase = int(np.argmax(pred))
+    return {"clase": clase}
