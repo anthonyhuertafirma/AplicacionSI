@@ -9,7 +9,8 @@ const HomePage = () => {
   const weeklyWorks = [
     { id: 1, name: "Algoritmo Genético", path: "/genetic-algorithm" },
     { id: 2, name: "Naive Bayes", path: "/naive-bayes" },
-    { id: 3, name: "Redes Neuronales", path: "/redes-neuronales" }
+    { id: 3, name: "Redes Neuronales", path: "/redes-neuronales" },
+    { id: 4, name: "Transfer learning", path: "/transfer-learning" }
   ];
 
   return (
