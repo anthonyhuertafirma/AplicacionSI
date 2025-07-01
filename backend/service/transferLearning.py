@@ -1,6 +1,7 @@
-from fastapi import File, UploadFile, APIRouter
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from tensorflow.keras.models import load_model
+from tensorflow.keras import models
+from fastapi import UploadFile, File
 from PIL import Image
 import numpy as np
 import json
@@ -12,13 +13,14 @@ router = APIRouter()
 # Cargar modelo y clases
 #print(os.path.exists("modelo_comidas_mobilenetv2_tf.keras"))
 
-model = load_model("modelo_comidas_mobilenetv2_dataset.keras")
+model = models.load_model("modelo_comidas_mobilenetv2_dataset.keras")
 
 with open("clases.json", "r") as f:
     clases_dict = json.load(f)
 
 # Invertir dict: índice → clase
 clases = {v: k for k, v in clases_dict.items()}
+
 
 @router.post("/imagepredict")
 async def transferlearning(file: UploadFile = File(...)):
