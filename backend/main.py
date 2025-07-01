@@ -1,6 +1,7 @@
 import joblib
 from fastapi import FastAPI
 import numpy as np
+from tensorflow.keras.models import load_model  
 
 from models.PhoneInput import PhoneInput
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +10,7 @@ from models.NLP import nlpIncidents
 
 app = FastAPI()
 model = joblib.load("./notebooks/naive_bayes_model.joblib")
-model_rn = joblib.load("./notebooks/modelo_test.keras")
+model_rn = load_model("./notebooks/modelo_test.keras")
 
 app.add_middleware(
     CORSMiddleware,
