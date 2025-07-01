@@ -10,7 +10,8 @@ const HomePage = () => {
     { id: 1, name: "Algoritmo Genético", path: "/genetic-algorithm" },
     { id: 2, name: "Naive Bayes", path: "/naive-bayes" },
     { id: 3, name: "Redes Neuronales", path: "/redes-neuronales" },
-    { id: 4, name: "Transfer learning", path: "/transfer-learning" }
+    { id: 4, name: "Transfer learning", path: "/transfer-learning" },
+    { id: 5, name: "Procesamiento del Lenguaje Natural", path: "/nlp" }
   ];
 
   return (
