@@ -5,6 +5,7 @@ import numpy as np
 from models.PhoneInput import PhoneInput
 from fastapi.middleware.cors import CORSMiddleware
 from service import transferLearning
+from models.NLP import nlpIncidents
 
 app = FastAPI()
 model = joblib.load("./notebooks/naive_bayes_model.joblib")
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(transferLearning.router, tags=["Predicts"])
+app.include_router(nlpIncidents.router, tags=["nlpredict"])
 
 @app.get("/")
 async def root():
