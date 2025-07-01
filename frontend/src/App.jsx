@@ -4,6 +4,7 @@ import GeneticAlgorithm from './components/GeneticAlgorithm/GeneticAlgorithm';
 import TransferLearning from './components/TransferLearning/TransferLearning.jsx'
 import NBayesPage from "./pages/NBayesPage.jsx";
 import RNPage from "./pages/RNPage.jsx";
+import Nlp from "./components/Nlp/NLP.jsx"
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/naive-bayes" element={<NBayesPage />} />
         <Route path="/redes-neuronales" element={<RNPage/>} />
         <Route path="/transfer-learning" element={<TransferLearning/>} />
+        <Route path="/nlp" element={<Nlp/>} />
       </Routes>
     </Router>
   );
