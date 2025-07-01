@@ -1,40 +1,66 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './HomePage.css'; 
+import WorkCard from '../WorkCard/WorkCard';
+import './HomePage.css';
 
 const HomePage = () => {
-  const navigate = useNavigate();
-
-  // Lista de tus trabajos semanales
   const weeklyWorks = [
-    { id: 1, name: "Algoritmo Genético", path: "/genetic-algorithm" },
-    { id: 2, name: "Naive Bayes", path: "/naive-bayes" },
-    { id: 3, name: "Redes Neuronales", path: "/redes-neuronales" },
-    { id: 4, name: "Transfer learning", path: "/transfer-learning" },
-    { id: 5, name: "Procesamiento del Lenguaje Natural", path: "/nlp" }
+    {
+      id: 1,
+      name: "Algoritmo Genético",
+      icon: "🧬",
+      description: "Optimización basada en evolución natural.",
+      tag: "Metaheurística",
+      path: "/genetic-algorithm"
+    },
+    {
+      id: 2,
+      name: "Naive Bayes",
+      icon: "📊",
+      description: "Clasificación basada en probabilidad.",
+      tag: "Estadística",
+      path: "/naive-bayes"
+    },
+    {
+      id: 3,
+      name: "Redes Neuronales",
+      icon: "🤖",
+      description: "Modelos inspirados en el cerebro humano.",
+      tag: "Deep Learning",
+      path: "/redes-neuronales"
+    },
+    {
+      id: 4,
+      name: "Transfer Learning",
+      icon: "👨‍🏫",
+      description: "Reutilización del conocimiento preentrenado.",
+      tag: "Aprendizaje Automático",
+      path: "/transfer-learning"
+    },
+    {
+      id: 5,
+      name: "NLP",
+      icon: "👨‍🏫",
+      description: "Procesamiento de lenguaje natural para la clasificación de incidencias.",
+      tag: "Procesamiento de Lenguaje Natural",
+      path: "/predictnlp"
+    }
   ];
 
   return (
     <div className="home-container">
       <header>
         <h1>Mis Trabajos de Software Inteligente</h1>
-        <p>Ciclo 2025-1 - UNMSM</p>
+        <p>Un portafolio de proyectos del G5.</p>
       </header>
 
       <div className="works-grid">
         {weeklyWorks.map((work) => (
-          <button 
-            key={work.id}
-            className="work-card"
-            onClick={() => navigate(work.path)}
-          >
-            <span>{work.name}</span>
-          </button>
+          <WorkCard key={work.id} {...work} />
         ))}
       </div>
 
       <footer>
-        <p>© {new Date().getFullYear()}</p>
+        <p>© {new Date().getFullYear()} - Construido con React y FastAPI</p>
       </footer>
     </div>
   );

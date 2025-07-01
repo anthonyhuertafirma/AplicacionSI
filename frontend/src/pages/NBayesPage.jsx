@@ -1,139 +1,118 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import './NBayesPage.css';
+import ProbabilityChart from '../components/charts/ProbabilityChart';
 
 const NBayesPage = () => {
-  const navigate = useNavigate();
-
   const [form, setForm] = useState({
-    battery_power: 842,
-    blue: 0,
-    clock_speed: 2.2,
-    dual_sim: 0,
-    fc: 1,
-    four_g: 0,
-    int_memory: 7,
-    m_dep: 0.6,
-    mobile_wt: 188,
-    n_cores: 2,
-    pc: 2,
-    px_height: 20,
-    px_width: 756,
-    ram: 2549,
-    sc_h: 9,
-    sc_w: 7,
-    talk_time: 19,
-    three_g: 0,
-    touch_screen: 0,
+    battery_power: 842, blue: 0, clock_speed: 2.2, dual_sim: 0,
+    fc: 1, four_g: 0, int_memory: 7, m_dep: 0.6, mobile_wt: 188,
+    n_cores: 2, pc: 2, px_height: 20, px_width: 756, ram: 2549,
+    sc_h: 9, sc_w: 7, talk_time: 19, three_g: 0, touch_screen: 0,
     wifi: 1
   });
 
-  const [prediction, setPrediction] = useState(null);
+  const [predictionData, setPredictionData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: isNaN(value) ? value : parseFloat(value)
+      [name]: parseFloat(value) || 0
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    setPredictionData(null);
+
     try {
-      const res = await fetch("http://localhost:8000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
-      });
-      const data = await res.json();
-      setPrediction(data);
+      // Simulación manual de respuesta
+      const simulatedResponse = {
+        predicted_class: "GAMA MEDIA",
+        probabilities: {
+          "GAMA BAJA": 0.10,
+          "GAMA MEDIA": 0.75,
+          "GAMA ALTA": 0.10,
+          "GAMA PREMIUM": 0.05
+        }
+      };
+
+      // Simular tiempo de espera del backend
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setPredictionData(simulatedResponse);
     } catch (err) {
-      console.error("Error en la petición:", err);
-      setPrediction("Error");
+      console.error("Error en la simulación:", err);
+      setError("No se pudo obtener la predicción simulada.");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "2rem" }}>Predicción de Precio de Celular</h1>
-
-      <button
-        onClick={() => navigate("/")}
-        style={{
-          marginBottom: "1.5rem",
-          backgroundColor: "#ccc",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: "5px",
-          cursor: "pointer"
-        }}
-      >
-        ← Volver al inicio
-      </button>
-
-      <form onSubmit={handleSubmit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-        {Object.entries(form).map(([key, value]) => (
-          <div key={key} style={{ display: "flex", flexDirection: "column" }}>
-            <label style={{ fontWeight: "bold", marginBottom: "5px" }}>{key.replace(/_/g, " ")}</label>
-            <input
-              name={key}
-              type="number"
-              value={value}
-              onChange={handleChange}
-              step="any"
-              style={{
-                padding: "8px",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-                fontSize: "14px"
-              }}
-            />
+  const renderResult = () => {
+    if (loading) return <p>Calculando...</p>;
+    if (error) return <div className="error-message">{error}</div>;
+    if (predictionData) {
+      return (
+        <>
+          <div>
+            <p>Rango de Precio Predicho:</p>
+            <div className="prediction-value">{predictionData.predicted_class}</div>
           </div>
-        ))}
-        <div style={{ gridColumn: "1 / -1", textAlign: "center", marginTop: "1rem" }}>
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              backgroundColor: "#007bff",
-              color: "#fff",
-              padding: "12px 30px",
-              border: "none",
-              borderRadius: "5px",
-              fontSize: "16px",
-              cursor: loading ? "not-allowed" : "pointer"
-            }}
-          >
-            {loading ? "Prediciendo..." : "Predecir precio"}
-          </button>
-        </div>
-      </form>
+          <div className="chart-wrapper">
+            <ProbabilityChart probabilityData={predictionData.probabilities} />
+          </div>
+        </>
+      );
+    }
+    return <p>Completa los parámetros y presiona "Predecir".</p>;
+  };
 
-      {prediction !== null && (
-        <div
-          style={{
-            marginTop: "2rem",
-            padding: "1rem",
-            backgroundColor: "#f1f1f1",
-            borderRadius: "8px",
-            textAlign: "center",
-            fontSize: "18px",
-            fontWeight: "bold"
-          }}
-        >
-          Rango de precio predicho: {prediction}
+  return (
+    <div className="nb-container">
+      <header className="nb-header">
+        <h2>Predicción de Gama de Celulares con Naive Bayes</h2>
+        <p>Introduce las características de un dispositivo móvil para predecir su rango de precio.</p>
+      </header>
+
+      <div className="nb-content-grid">
+        <div className="nb-form-widget">
+          <h4>Parámetros del Móvil</h4>
+          <form onSubmit={handleSubmit}>
+            <div className="form-fields-grid">
+              {Object.entries(form).map(([key, value]) => (
+                <div key={key} className="form-group">
+                  <label>{key.replace(/_/g, " ")}</label>
+                  <input
+                    name={key}
+                    type="number"
+                    value={value}
+                    onChange={handleChange}
+                    step="any"
+                    className="form-input"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="submit-button-container">
+              <button type="submit" disabled={loading} className="form-button-primary">
+                {loading ? "Prediciendo..." : "Predecir Precio"}
+              </button>
+            </div>
+          </form>
         </div>
-      )}
+
+        <div className="nb-results-widget">
+          <h4>Resultado</h4>
+          {renderResult()}
+        </div>
+      </div>
     </div>
   );
 };
 
 export default NBayesPage;
-
-

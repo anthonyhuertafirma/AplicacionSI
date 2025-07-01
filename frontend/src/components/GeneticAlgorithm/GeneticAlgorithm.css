@@ -1,71 +1,149 @@
-.genetic-algorithm {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .controls {
-    margin: 20px 0;
-    padding: 15px;
-    background: #f5f5f5;
-    border-radius: 8px;
-  }
-  
-  .controls button {
-    padding: 8px 16px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .controls button:hover {
-    background: #45a049;
-  }
-  
-  .config {
-    margin-top: 10px;
-    display: flex;
-    gap: 15px;
-  }
-  
-  .config label {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-  }
-  
-  .config input {
-    margin-top: 5px;
-    padding: 4px;
-  }
-  
-  .stats {
-    background: #e9f7ef;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  
-  .visualization {
-    margin-top: 30px;
-  }
-  
-  .chart {
-    display: flex;
-    align-items: flex-end;
-    height: 200px;
-    gap: 2px;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
-  }
-  
-  .bar {
-    flex: 1;
-    background: #4CAF50;
-    min-width: 2px;
-    transition: height 0.3s;
-  }
+/* Hereda las variables de color del :root en tu CSS global */
+:root {
+  --accent-gold: #FFD700;
+  --accent-blue: #007BFF;
+  --text-primary: #EAEAEA;
+  --text-secondary: #9a9a9a;
+  --border-radius: 12px;
+}
+
+.ga-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+
+.ga-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ga-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.ga-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ga-main-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Estilo de widget genérico */
+.ga-controls-widget, .ga-results-widget, .ga-visualization-widget {
+  background: linear-gradient(145deg, #1e1e2d, #14141f);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+}
+
+.ga-controls-widget h4, .ga-results-widget h4, .ga-visualization-widget h4 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* Estilos de Formularios */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #10101a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-button-primary {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #121212;
+  background-color: var(--accent-gold);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.form-button-primary:hover {
+  background-color: #ffed4a;
+}
+
+.form-button-primary:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+}
+
+
+/* Estilos de resultados */
+.result-coords {
+  background-color: rgba(0,0,0,0.2);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+}
+.fitness-value {
+  color: var(--accent-gold);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Estilos de Visualización */
+.chart-container {
+  display: flex;
+  align-items: flex-end;
+  height: 200px;
+  gap: 2px;
+  padding: 1rem;
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bar {
+  flex-grow: 1;
+  background: linear-gradient(to top, var(--accent-blue), var(--accent-gold));
+  min-width: 4px;
+  transition: height 0.2s ease;
+  border-radius: 2px 2px 0 0;
+}

@@ -1,0 +1,82 @@
+.rn-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+
+.rn-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.rn-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rn-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.rn-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.rn-form-widget, .rn-results-widget {
+  background: linear-gradient(145deg, #1e1e2d, #14141f);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.rn-form-widget h4, .rn-results-widget h4 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.rn-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.form-textarea {
+    flex-grow: 1; /* Ocupa todo el espacio vertical disponible */
+    width: 100%;
+    padding: 1rem;
+    background-color: #10101a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    box-sizing: border-box;
+    resize: vertical; /* Permite al usuario cambiar el tamaño verticalmente */
+    font-family: inherit;
+}
+
+.submit-button-container {
+  margin-top: 1.5rem;
+}
+
+.rn-results-widget {
+  justify-content: flex-start;
+}
+
+.result-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}

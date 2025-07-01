@@ -1,0 +1,78 @@
+.project-card {
+  background: linear-gradient(145deg, #1e1e2d, #14141f);
+  border: 1px solid #333;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; /* Para que todas las tarjetas tengan la misma altura en la grilla */
+  box-sizing: border-box;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.2);
+  border-color: var(--accent-blue);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--accent-gold);
+}
+
+.card-tag {
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #58a6ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.card-body {
+  flex-grow: 1; /* Empuja el footer hacia abajo */
+}
+
+.card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.card-footer {
+  margin-top: 1.5rem;
+}
+
+.card-button {
+  background-color: var(--primary-color, #5E5DF0); /* Usa variable si existe, si no un color por defecto */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.card-button:hover {
+  background-color: #4a4ac3;
+}
