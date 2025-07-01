@@ -1,0 +1,166 @@
+/* Estilos para la página Naive Bayes */
+.nb-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--text-primary);
+}
+
+.nb-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.nb-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nb-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Contenedor principal (CON LA CORRECCIÓN) */
+.nb-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch; /* <-- CAMBIO CLAVE: Fuerza a los hijos a tener la misma altura */
+}
+
+/* Widget para el formulario */
+.nb-form-widget {
+  background: linear-gradient(145deg, #1e1e2d, #14141f);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: 1.5rem 2rem;
+}
+
+.nb-form-widget h4 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Grilla para los campos del formulario */
+.form-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+/* Widget para los resultados (CON LA CORRECCIÓN) */
+.nb-results-widget {
+  background: linear-gradient(145deg, #1e1e2d, #14141f);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  position: sticky;
+  top: 120px;
+  text-align: center;
+
+  /* --- LÍNEAS MODIFICADAS --- */
+  /* Ya no necesita altura fija, se estirará automáticamente */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+    
+.nb-results-widget h4 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: auto; 
+}
+
+.prediction-value {
+  background-color: var(--accent-gold);
+  color: #121212;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.error-message {
+  background-color: #5d1a1a;
+  color: #ffacac;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ff5555;
+}
+
+.submit-button-container {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+    
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+    
+.form-input {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: #10101a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.form-button-primary {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #121212;
+    background-color: var(--accent-gold);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.form-button-primary:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* --- ESTILOS PARA LA BARRA DE SCROLL --- */
+.form-fields-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form-fields-grid::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.form-fields-grid::-webkit-scrollbar-thumb {
+  background-color: #4f4f5a;
+  border-radius: 10px;
+}
+
+.form-fields-grid::-webkit-scrollbar-thumb:hover {
+  background-color: #6a6a7a;
+}
+/* --- Estilos para el Contenedor del Gráfico --- */
+.chart-wrapper {
+  margin-top: 1.5rem;
+  height: 250px; /* Le damos una altura fija para que el gráfico se muestre bien */
+}

@@ -1,104 +1,136 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import './TransferLearning.css'; // Asegúrate que el nombre del CSS coincida
 
-function FoodClassifier() {
+const TransferLearningPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const [confidence, setConfidence] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedImage(file);
-    if (file) {
+  const handleImageChange = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      setSelectedImage(file);
       setPreviewImage(URL.createObjectURL(file));
-      setPrediction(null); // Clear previous prediction
-      setConfidence(null); // Clear previous confidence
-      setError(null); // Clear previous error
+      setPrediction(null);
+      setConfidence(null);
+      setError(null);
     } else {
+      setError("Por favor selecciona un archivo de imagen válido.");
+      setSelectedImage(null);
       setPreviewImage(null);
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     if (!selectedImage) {
       setError("Por favor selecciona una imagen primero.");
       return;
     }
+    setLoading(true);
+    setError(null);
 
     const formData = new FormData();
     formData.append('file', selectedImage);
 
     try {
-      const response = await fetch('http://localhost:8000/imagepredict', { 
+      const response = await fetch('http://localhost:8000/imagepredict', {
         method: 'POST',
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
       const data = await response.json();
       setPrediction(data.prediction);
-      setConfidence(data.confidence);
-      setError(null); // Clear any previous errors
-
+      // Convertimos la confianza (ej: 0.95) a un string con % (ej: "95.00%")
+      setConfidence(`${(parseFloat(data.confidence))}%`);
     } catch (error) {
       console.error("Error al enviar la imagen:", error);
-      setError("Error al obtener la predicción. Por favor, inténtalo de nuevo.");
-      setPrediction(null);
-      setConfidence(null);
+      setError("Error al obtener la predicción. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDragEnter = (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
+  const handleDragLeave = (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
+  const handleDragOver = (e) => { e.preventDefault(); e.stopPropagation(); };
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleImageChange(e.dataTransfer.files[0]);
     }
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: '20px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', color: 'black' }}> {/* Aplicar color negro al contenedor principal */}
-      <h1 style={{ textAlign: 'center', color: 'black' }}>Clasificador de Comida</h1> 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          style={{ padding: '10px', border: '1px solid #ddd', borderRadius: '4px', color: 'black' }} 
-        />
-        <button
-          type="submit"
-          style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
-        >
-          Clasificar Comida
-        </button>
-      </form>
+    <div className="tl-container">
+      <header className="tl-header">
+        <h2>Clasificador de Imágenes con Transfer Learning</h2>
+        <p>Sube una imagen de una comida para que el modelo la identifique.</p>
+      </header>
 
-      {error && (
-        <p style={{ color: 'red', textAlign: 'center', marginTop: '15px' }}>{error}</p>
-      )}
-
-      {previewImage && (
-        <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <h2 style={{ color: 'black' }}>Imagen Seleccionada:</h2> 
-          <img
-            src={previewImage}
-            alt="Vista previa de la imagen seleccionada"
-            style={{ maxWidth: '100%', height: 'auto', border: '1px solid #eee', borderRadius: '8px' }}
-          />
+      <div className="tl-content-grid">
+        <div className="tl-widget">
+          <h4>Cargar Imagen</h4>
+          <div 
+            className={`drop-zone ${isDragging ? 'dragging' : ''}`}
+            onClick={() => fileInputRef.current.click()}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="file-input"
+              onChange={(e) => handleImageChange(e.target.files[0])}
+            />
+            <p>Arrastra y suelta una imagen aquí, o <span>haz clic para seleccionar</span>.</p>
+          </div>
+          <button 
+            className="form-button-primary" 
+            onClick={handleSubmit} 
+            disabled={!selectedImage || loading}
+            style={{width: '100%', marginTop: '1rem'}}
+          >
+            {loading ? "Clasificando..." : "Clasificar Comida"}
+          </button>
         </div>
-      )}
 
-      {prediction && confidence && (
-        <div style={{ marginTop: '20px', padding: '15px', border: '1px solid black', borderRadius: '8px', backgroundColor: '#f9f9f9', color: 'black' }}> 
-          <h2 style={{ textAlign: 'center', color: 'black' }}>Resultado de la Predicción:</h2> 
-          <p style={{ fontSize: '18px', textAlign: 'center', margin: '10px 0', color: 'black' }}> 
-            <strong style={{ color: 'black' }}>Clasificación:</strong> {prediction} 
-          </p>
-          <p style={{ fontSize: '18px', textAlign: 'center', margin: '10px 0', color: 'black' }}> 
-            <strong style={{ color: 'black' }}>Confianza:</strong> {confidence} 
-          </p>
+        <div className="tl-widget">
+          <h4>Vista Previa y Resultado</h4>
+          <div className="result-content-area">
+            {error && <div className="error-message">{error}</div>}
+            {!previewImage && !error && <p className="initial-text">Selecciona una imagen para comenzar.</p>}
+            {previewImage && (
+              <div className="preview-container">
+                <img src={previewImage} alt="Vista previa" className="preview-image" />
+              </div>
+            )}
+            {loading && <div className="loading-text">Analizando...</div>}
+            {prediction && confidence && (
+              <div className="results-container">
+                <p className="prediction-text">Predicción: <span>{prediction}</span></p>
+                <div className="confidence-meter">
+                  <label>Confianza: {confidence}</label>
+                  <div className="confidence-bar-bg">
+                    <div className="confidence-bar-fill" style={{ width: confidence }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
 
-export default FoodClassifier;
+export default TransferLearningPage;
