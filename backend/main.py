@@ -1,14 +1,14 @@
 import joblib
 from fastapi import FastAPI
-from service import imagepredict
 import numpy as np
+
 from models.PhoneInput import PhoneInput
 from fastapi.middleware.cors import CORSMiddleware
 from service import transferLearning
 
 app = FastAPI()
 model = joblib.load("./notebooks/naive_bayes_model.joblib")
-
+model_rn = joblib.load("./notebooks/modelo_test.keras")
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +20,7 @@ app.add_middleware(
 
 app.include_router(transferLearning.router, tags=["Predicts"])
 
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -29,7 +30,6 @@ async def root():
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
-app.include_router(imagepredict.router, tags=["Predicts"])
 
 @app.post("/predict")
 async def root(specs: PhoneInput):
@@ -71,6 +71,6 @@ async def root(specs: PhoneInput):
 @app.post("/predict-rn")
 def predict(data: dict[str, float]):
     X = np.array([[v for v in data.values()]])
-    pred = model.predict(X)
+    pred = model_rn.predict(X)
     clase = int(np.argmax(pred))
     return {"clase": clase}
