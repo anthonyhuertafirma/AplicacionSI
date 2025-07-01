@@ -1,6 +1,8 @@
 import joblib
 from fastapi import FastAPI
 import numpy as np
+from tensorflow.keras.models import load_model  
+
 from models.PhoneInput import PhoneInput
 from fastapi.middleware.cors import CORSMiddleware
 from service import transferLearning
@@ -8,7 +10,7 @@ from models.NLP import nlpIncidents
 
 app = FastAPI()
 model = joblib.load("./notebooks/naive_bayes_model.joblib")
-
+model_rn = load_model("./notebooks/modelo_test.keras")
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +22,7 @@ app.add_middleware(
 
 app.include_router(transferLearning.router, tags=["Predicts"])
 app.include_router(nlpIncidents.router, tags=["nlpredict"])
+
 
 @app.get("/")
 async def root():
@@ -71,6 +74,6 @@ async def root(specs: PhoneInput):
 @app.post("/predict-rn")
 def predict(data: dict[str, float]):
     X = np.array([[v for v in data.values()]])
-    pred = model.predict(X)
+    pred = model_rn.predict(X)
     clase = int(np.argmax(pred))
     return {"clase": clase}
